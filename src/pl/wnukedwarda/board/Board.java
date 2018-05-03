@@ -1,4 +1,4 @@
-package pl.wnukedwarda;
+package pl.wnukedwarda.board;
 
 public class Board {
 
