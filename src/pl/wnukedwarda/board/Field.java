@@ -1,15 +1,30 @@
 package pl.wnukedwarda.board;
 
+import pl.wnukedwarda.ship.Ship;
+
 public class Field {
 
     private int x;
     private int y;
     private State state;
+    private Ship ship;
+
+    public int getX() { return x; }
+
+    public int getY() { return y;}
+
+    public State getState() { return state;}
+
+    public Ship getShip() { return ship; }
 
     public Field(int x, int y, State state) {
         this.x = x;
         this.y = y;
         this.state = state;
+    }
+
+    public void setShip(Ship ship){
+        this.ship = ship;
     }
 
     public char stateToChar() {

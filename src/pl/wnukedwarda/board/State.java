@@ -1,5 +1,5 @@
 package pl.wnukedwarda.board;
 
 public enum State {
-    EMPTY, HIT, MISS, SUNK
+    EMPTY, SHIP, HIT, MISS, SUNK
 }

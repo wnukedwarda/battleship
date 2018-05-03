@@ -9,6 +9,12 @@ public abstract class WarShip implements Ship {
     private int hits;
     private Field[] occupied;
 
+    public Orientation getOrientation() { return orientation; }
+
+    public int getHits() { return hits; }
+
+    public Field[] getOccupied() { return occupied; }
+
     public WarShip(){
         occupied =  new Field[getDecksCount()];
     }
@@ -16,6 +22,12 @@ public abstract class WarShip implements Ship {
     @Override
     public boolean isSunk() {
         return hits == getDecksCount();
+    }
+
+    public void setOnField(Field field, int deckNumber){
+        field.setShip(this);
+        field.setState(State.SHIP);
+        occupied[deckNumber] = field;
     }
 
     @Override
