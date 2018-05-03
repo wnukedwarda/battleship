@@ -8,4 +8,5 @@ public interface Ship {
     void hit();
     boolean isSunk();
     void setOnField(Field field, int deckNumber);
+    Orientation getOrientation();
 }

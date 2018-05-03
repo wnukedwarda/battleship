@@ -1,15 +1,18 @@
 package pl.wnukedwarda.board;
 
 import pl.wnukedwarda.IllegalMoveException;
+import pl.wnukedwarda.ship.Orientation;
+import pl.wnukedwarda.ship.Ship;
 import pl.wnukedwarda.ship.WarShip;
-import pl.wnukedwarda.ship.shipTypes.Submarine;
 
 public class Board {
 
     public static final int BOARD_SIZE = 10;
+    public static final int SHIP_TYPES_COUNT = 4;
+
     private Field[][] fields = new Field[BOARD_SIZE][BOARD_SIZE];
     private int shipsCount;
-    private int submarineCount;
+    private int[] numberOfShipsByDeck = new int[SHIP_TYPES_COUNT];
 
     public Board() {
         for (int i = 0; i < BOARD_SIZE; i++) {
@@ -19,7 +22,7 @@ public class Board {
         }
     }
 
-    public Field getField(int x, int y){
+    public Field getField(int x, int y) {
         return fields[x][y];
     }
 
@@ -67,16 +70,34 @@ public class Board {
         else return State.MISS;
     }
 
-    public void addShip(int x, int y, WarShip warShip) throws IllegalMoveException {
-        if(submarineCount >=4){
-            throw new IllegalMoveException("You have all submarines set!");
+    public void addShip(int x, int y, Ship ship) throws IllegalMoveException {
+
+        int count = ship.getDecksCount();
+        if (numberOfShipsByDeck[count - 1]
+                == getTotalCountOfShips(count)) {
+            throw new IllegalMoveException("You have all ship set!");
         }
         if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) {
             throw new IllegalMoveException("Ship set outside board!");
         }
-        warShip.setOnField(fields[x][y],0);
+
+        Field[] field = new Field[count];
+        int xToSet = x, ytoSet = y;
+
+        for (int i = 0; i < count; i++) {
+            if(ship.getOrientation() == Orientation.HORIZONTAL){
+                xToSet = x+1;
+            }else {
+                ytoSet = y+i;
+            }
+        }
+
+        ship.setOnField(fields[x][y], 0);
+
         shipsCount++;
-        submarineCount++;
+        numberOfShipsByDeck[count - 1]++;
+
+
     }
 
     public static boolean fieldIsEmpty(Field[][] fields) {
@@ -97,6 +118,11 @@ public class Board {
 
     public int getShipsCount() {
         return shipsCount;
+    }
+
+
+    private int getTotalCountOfShips(int decksCount) {
+        return SHIP_TYPES_COUNT - decksCount + 1;
     }
 }
 

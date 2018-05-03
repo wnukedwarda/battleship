@@ -15,7 +15,8 @@ public abstract class WarShip implements Ship {
 
     public Field[] getOccupied() { return occupied; }
 
-    public WarShip(){
+    public WarShip(Orientation orientation){
+        this.orientation = orientation;
         occupied =  new Field[getDecksCount()];
     }
 

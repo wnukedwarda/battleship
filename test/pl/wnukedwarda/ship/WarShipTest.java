@@ -3,13 +3,14 @@ package pl.wnukedwarda.ship;
 import org.junit.jupiter.api.Test;
 import pl.wnukedwarda.ship.shipTypes.BattleShip;
 import pl.wnukedwarda.ship.shipTypes.Cruiser;
+import pl.wnukedwarda.ship.shipTypes.Destroyer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class WarShipTest {
 
-    WarShip ship1 = new BattleShip();
-    WarShip ship2 = new Cruiser();
+    WarShip ship1 = new BattleShip(Orientation.HORIZONTAL);
+    WarShip ship2 = new Destroyer(Orientation.HORIZONTAL);
 
     @Test
     void testHit() {
