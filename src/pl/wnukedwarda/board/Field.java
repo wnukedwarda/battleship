@@ -4,8 +4,8 @@ import pl.wnukedwarda.ship.Ship;
 
 public class Field {
 
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
     private State state;
     private Ship ship;
 
