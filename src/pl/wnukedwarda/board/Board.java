@@ -3,7 +3,6 @@ package pl.wnukedwarda.board;
 import pl.wnukedwarda.IllegalMoveException;
 import pl.wnukedwarda.ship.Orientation;
 import pl.wnukedwarda.ship.Ship;
-import pl.wnukedwarda.ship.WarShip;
 
 public class Board {
 
@@ -73,32 +72,58 @@ public class Board {
     public void addShip(int x, int y, Ship ship) throws IllegalMoveException {
 
         int count = ship.getDecksCount();
+        Field[] field = new Field[count];
+        int xToSet = x, ytoSet = y;
+
         if (numberOfShipsByDeck[count - 1]
                 == getTotalCountOfShips(count)) {
             throw new IllegalMoveException("You have all ship set!");
         }
-        if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) {
-            throw new IllegalMoveException("Ship set outside board!");
-        }
 
-        Field[] field = new Field[count];
-        int xToSet = x, ytoSet = y;
 
         for (int i = 0; i < count; i++) {
-            if(ship.getOrientation() == Orientation.HORIZONTAL){
-                xToSet = x+1;
-            }else {
-                ytoSet = y+i;
+            if (ship.getOrientation() == Orientation.HORIZONTAL) {
+                xToSet = x + 1;
+            } else {
+                ytoSet = y + i;
             }
+            if (isOutSide(xToSet, ytoSet)) {
+                throw new IllegalMoveException("Ship set outside board!");
+            }
+            field[i] = fields[ytoSet][xToSet];
+            if(isFieldOccupied(field[i])){
+                throw new IllegalMoveException("Field is occupied!");
+            }
+
         }
 
-        ship.setOnField(fields[x][y], 0);
+        for (int i = 0; i < count; i++) {
+            ship.setOnField(field[i], i);
+        }
 
         shipsCount++;
         numberOfShipsByDeck[count - 1]++;
 
 
     }
+
+    private boolean isFieldOccupied(Field field) {
+        for (int y = field.getY() - 1; y <= field.getY() + 1; y++) {
+            for (int x = field.getX() - 1; x <= field.getX() + 1; x++) {
+
+                if(isOutSide(x, y)) {
+                    continue;
+                }
+
+                if(fields[y][x].getState() != State.EMPTY) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isOutSide(int x, int y) { return x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE; }
 
     public static boolean fieldIsEmpty(Field[][] fields) {
         boolean result = true;
@@ -112,17 +137,11 @@ public class Board {
     }
 
     private static boolean isTrue(State state) {
-        if (State.EMPTY.equals(State.EMPTY)) return true;
-        else return false;
-    }
+        if (State.EMPTY.equals(State.EMPTY)) return true; else return false; }
 
-    public int getShipsCount() {
-        return shipsCount;
-    }
+    public int getShipsCount() { return shipsCount; }
 
 
-    private int getTotalCountOfShips(int decksCount) {
-        return SHIP_TYPES_COUNT - decksCount + 1;
-    }
+    private int getTotalCountOfShips(int decksCount) { return SHIP_TYPES_COUNT - decksCount + 1; }
 }
 
