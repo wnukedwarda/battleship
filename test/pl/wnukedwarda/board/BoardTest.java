@@ -35,7 +35,8 @@ class BoardTest {
 
     @Test
     void testShouldAddDestroyerOnFields() throws IllegalMoveException {
-        board.addShip(1,0, new Destroyer(Orientation.HORIZONTAL));
+        board.addShip(0,0, new Destroyer(Orientation.HORIZONTAL));
+        field = board.getField(1,0);
         assertEquals(State.SHIP, field.getState());
     }
 
@@ -51,6 +52,12 @@ class BoardTest {
                 () -> board.addShip(0,0, new Submarine()));
 
         assertEquals("You have all ship set!",exception.getMessage());
+    }
+
+    @Test
+    void testShouldNotBeAbleToGetOutside() throws Exception {
+        Exception exception = assertThrows(
+                Exception.class, () -> board.addShip(9,0, new Destroyer(Orientation.HORIZONTAL)));
     }
 
     @Test

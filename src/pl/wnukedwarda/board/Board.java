@@ -3,7 +3,6 @@ package pl.wnukedwarda.board;
 import pl.wnukedwarda.IllegalMoveException;
 import pl.wnukedwarda.ship.Orientation;
 import pl.wnukedwarda.ship.Ship;
-import pl.wnukedwarda.ship.WarShip;
 
 public class Board {
 
@@ -77,27 +76,34 @@ public class Board {
                 == getTotalCountOfShips(count)) {
             throw new IllegalMoveException("You have all ship set!");
         }
-        if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) {
-            throw new IllegalMoveException("Ship set outside board!");
-        }
 
         Field[] field = new Field[count];
         int xToSet = x, ytoSet = y;
 
         for (int i = 0; i < count; i++) {
             if(ship.getOrientation() == Orientation.HORIZONTAL){
-                xToSet = x+1;
+                xToSet = x+i;
             }else {
                 ytoSet = y+i;
             }
+            if (isOutside(x, y)) {
+                throw new IllegalMoveException("Ship set outside board!");
+            }
+            field[i] = fields[xToSet][ytoSet];
+        }
+        for (int i = 0; i < count; i++) {
+            ship.setOnField(field[i],i);
         }
 
-        ship.setOnField(fields[x][y], 0);
 
         shipsCount++;
         numberOfShipsByDeck[count - 1]++;
 
 
+    }
+
+    private boolean isOutside(int x, int y) {
+        return x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE;
     }
 
     public static boolean fieldIsEmpty(Field[][] fields) {
