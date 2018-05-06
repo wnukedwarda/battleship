@@ -55,9 +55,12 @@ class BoardTest {
     }
 
     @Test
-    void testShouldNotBeAbleToGetOutside() throws Exception {
-        Exception exception = assertThrows(
-                Exception.class, () -> board.addShip(9,0, new Destroyer(Orientation.HORIZONTAL)));
+    void testShouldNotBeAbleToGetOutside() throws  ArrayIndexOutOfBoundsException{
+       ArrayIndexOutOfBoundsException exception = assertThrows(
+                ArrayIndexOutOfBoundsException.class, ()
+                        -> board.addShip(9,0, new Destroyer(Orientation.HORIZONTAL)));
+
+        assertEquals("10", exception.getMessage());
     }
 
     @Test
@@ -69,5 +72,45 @@ class BoardTest {
                         -> board.addShip(6,0,new BattleShip(Orientation.HORIZONTAL)));
 
         assertEquals("You have all ship set!", exception.getMessage());
+    }
+
+    @Test
+    void testShootMarkAsMiss() throws IllegalMoveException {
+        board.shoot(0,0);
+        assertEquals(board.getField(0,0).getState(), State.MISS);
+    }
+
+    @Test
+    void testShootMarkAsHit() throws IllegalMoveException {
+        board.addShip(0,0, new Destroyer(Orientation.HORIZONTAL));
+        board.shoot(0,0);
+        assertEquals(board.getField(0,0).getState(),State.HIT);
+    }
+
+    @Test
+    void testShootMarkAsSunk() throws IllegalMoveException {
+        board.addShip(0,0, new Destroyer(Orientation.HORIZONTAL));
+        board.shoot(0,0);
+        board.shoot(1,0);
+        assertEquals(board.getField(0,0).getState(),State.SUNK);
+        assertEquals(board.getField(1,0).getState(),State.SUNK);
+    }
+
+    @Test
+    void testShouldDecreaseShipsOnBoard() throws IllegalMoveException {
+        board.addShip(0,0, new Destroyer(Orientation.HORIZONTAL));
+        board.shoot(0,0);
+        board.shoot(1,0);
+        assertEquals(0,board.getShipsCount());
+    }
+
+    @Test
+    void testShouldNotBeAbleToShootTwice() throws IllegalMoveException {
+        board.shoot(0,0);
+
+       IllegalMoveException exception = assertThrows(
+               IllegalMoveException.class, ()-> board.shoot(0,0));
+
+       assertEquals("This field was hit!", exception.getMessage());
     }
 }
