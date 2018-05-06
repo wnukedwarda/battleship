@@ -42,15 +42,16 @@ class BoardTest {
 
     @Test
     void testShouldNotBeAbleToAddFiveWarships() throws IllegalMoveException {
-        board.addShip(1,1, new Submarine());
         board.addShip(3,3, new Submarine());
-        board.addShip(5,5, new Submarine());
+        board.addShip(2,1, new Submarine());
         board.addShip(7,7, new Submarine());
+        board.addShip(9,9, new Submarine());
 
         IllegalMoveException exception = assertThrows(
                 IllegalMoveException.class,
-                () -> board.addShip(8,8, new Submarine()));
+                () -> board.addShip(0,0, new Submarine()));
 
+        assertEquals("You have all ship set!",exception.getMessage());
     }
 
     @Test
@@ -111,5 +112,11 @@ class BoardTest {
                IllegalMoveException.class, ()-> board.shoot(0,0));
 
        assertEquals("This field was hit!", exception.getMessage());
+    }
+
+    @Test
+    void testShouldHaveAllShipsGenerated() {
+        board.fillBoard();
+        assertEquals(10, board.getShipsCount());
     }
 }
