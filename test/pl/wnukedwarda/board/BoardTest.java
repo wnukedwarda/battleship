@@ -35,21 +35,32 @@ class BoardTest {
 
     @Test
     void testShouldAddDestroyerOnFields() throws IllegalMoveException {
-        board.addShip(1,0, new Destroyer(Orientation.HORIZONTAL));
+        board.addShip(0,0, new Destroyer(Orientation.HORIZONTAL));
+        field = board.getField(1,0);
         assertEquals(State.SHIP, field.getState());
     }
 
     @Test
     void testShouldNotBeAbleToAddFiveWarships() throws IllegalMoveException {
-        board.addShip(1,1, new Submarine());
         board.addShip(3,3, new Submarine());
-        board.addShip(5,5, new Submarine());
+        board.addShip(2,1, new Submarine());
         board.addShip(7,7, new Submarine());
+        board.addShip(9,9, new Submarine());
 
         IllegalMoveException exception = assertThrows(
                 IllegalMoveException.class,
-                () -> board.addShip(8,8, new Submarine()));
+                () -> board.addShip(0,0, new Submarine()));
 
+        assertEquals("You have all ship set!",exception.getMessage());
+    }
+
+    @Test
+    void testShouldNotBeAbleToGetOutside() throws  ArrayIndexOutOfBoundsException{
+       ArrayIndexOutOfBoundsException exception = assertThrows(
+                ArrayIndexOutOfBoundsException.class, ()
+                        -> board.addShip(9,0, new Destroyer(Orientation.HORIZONTAL)));
+
+        assertEquals("10", exception.getMessage());
     }
 
     @Test
@@ -61,5 +72,51 @@ class BoardTest {
                         -> board.addShip(6,0,new BattleShip(Orientation.HORIZONTAL)));
 
         assertEquals("You have all ship set!", exception.getMessage());
+    }
+
+    @Test
+    void testShootMarkAsMiss() throws IllegalMoveException {
+        board.shoot(0,0);
+        assertEquals(board.getField(0,0).getState(), State.MISS);
+    }
+
+    @Test
+    void testShootMarkAsHit() throws IllegalMoveException {
+        board.addShip(0,0, new Destroyer(Orientation.HORIZONTAL));
+        board.shoot(0,0);
+        assertEquals(board.getField(0,0).getState(),State.HIT);
+    }
+
+    @Test
+    void testShootMarkAsSunk() throws IllegalMoveException {
+        board.addShip(0,0, new Destroyer(Orientation.HORIZONTAL));
+        board.shoot(0,0);
+        board.shoot(1,0);
+        assertEquals(board.getField(0,0).getState(),State.SUNK);
+        assertEquals(board.getField(1,0).getState(),State.SUNK);
+    }
+
+    @Test
+    void testShouldDecreaseShipsOnBoard() throws IllegalMoveException {
+        board.addShip(0,0, new Destroyer(Orientation.HORIZONTAL));
+        board.shoot(0,0);
+        board.shoot(1,0);
+        assertEquals(0,board.getShipsCount());
+    }
+
+    @Test
+    void testShouldNotBeAbleToShootTwice() throws IllegalMoveException {
+        board.shoot(0,0);
+
+       IllegalMoveException exception = assertThrows(
+               IllegalMoveException.class, ()-> board.shoot(0,0));
+
+       assertEquals("This field was hit!", exception.getMessage());
+    }
+
+    @Test
+    void testShouldHaveAllShipsGenerated() {
+        board.fillBoard();
+        assertEquals(10, board.getShipsCount());
     }
 }

@@ -4,6 +4,13 @@ import pl.wnukedwarda.IllegalMoveException;
 import pl.wnukedwarda.ship.Orientation;
 import pl.wnukedwarda.ship.Ship;
 
+import pl.wnukedwarda.ship.shipTypes.BattleShip;
+import pl.wnukedwarda.ship.shipTypes.Cruiser;
+import pl.wnukedwarda.ship.shipTypes.Destroyer;
+import pl.wnukedwarda.ship.shipTypes.Submarine;
+
+import java.util.Random;
+
 public class Board {
 
     public static final int BOARD_SIZE = 10;
@@ -30,10 +37,41 @@ public class Board {
     }
 
     public void fillBoard() {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < BOARD_SIZE; j++) {
-                fields[i][j].setState(getRandomShip(Math.random()));
+        Random random = new Random();
+        for (int decks = 1; decks <= SHIP_TYPES_COUNT; decks++) {
+            for (int i = 0; i < getTotalCountOfShips(decks); i++) {
+
+                boolean tryAgain;
+                do {
+                    int x = random.nextInt(BOARD_SIZE);
+                    int y = random.nextInt(BOARD_SIZE);
+                    Orientation orientation =
+                            random.nextBoolean() ? Orientation.HORIZONTAL
+                                    : Orientation.VERTICAL;
+                    Ship ship = getShip(decks, orientation);
+                    try {
+                        addShip(x, y, ship);
+                        tryAgain = false;
+                    } catch (IllegalMoveException e) {
+                        tryAgain = true;
+                    }
+                } while (tryAgain);
             }
+        }
+    }
+
+    private Ship getShip(int decks, Orientation orientation) {
+        switch (decks) {
+            case 1:
+                return new Submarine(orientation);
+            case 2:
+                return new Destroyer(orientation);
+            case 3:
+                return new Cruiser(orientation);
+            case 4:
+                return new BattleShip(orientation);
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
@@ -72,34 +110,36 @@ public class Board {
     public void addShip(int x, int y, Ship ship) throws IllegalMoveException {
 
         int count = ship.getDecksCount();
-        Field[] field = new Field[count];
-        int xToSet = x, ytoSet = y;
-
         if (numberOfShipsByDeck[count - 1]
                 == getTotalCountOfShips(count)) {
             throw new IllegalMoveException("You have all ship set!");
         }
 
+        Field[] field = new Field[count];
+        int xToSet = x, ytoSet = y;
 
         for (int i = 0; i < count; i++) {
             if (ship.getOrientation() == Orientation.HORIZONTAL) {
-                xToSet = x + 1;
+                xToSet = x + i;
             } else {
                 ytoSet = y + i;
             }
-            if (isOutSide(xToSet, ytoSet)) {
+            if (isOutside(x, y)) {
                 throw new IllegalMoveException("Ship set outside board!");
             }
-            field[i] = fields[ytoSet][xToSet];
-            if(isFieldOccupied(field[i])){
+
+            field[i] = fields[xToSet][ytoSet];
+
+            if (isFieldOccupied(field[i])) {
+
+
                 throw new IllegalMoveException("Field is occupied!");
             }
-
         }
-
         for (int i = 0; i < count; i++) {
             ship.setOnField(field[i], i);
         }
+
 
         shipsCount++;
         numberOfShipsByDeck[count - 1]++;
@@ -111,11 +151,10 @@ public class Board {
         for (int y = field.getY() - 1; y <= field.getY() + 1; y++) {
             for (int x = field.getX() - 1; x <= field.getX() + 1; x++) {
 
-                if(isOutSide(x, y)) {
+                if (isOutside(x, y)) {
                     continue;
                 }
-
-                if(fields[y][x].getState() != State.EMPTY) {
+                if (fields[y][x].getState() != State.EMPTY) {
                     return true;
                 }
             }
@@ -123,7 +162,9 @@ public class Board {
         return false;
     }
 
-    private boolean isOutSide(int x, int y) { return x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE; }
+    private boolean isOutside(int x, int y) {
+        return x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE;
+    }
 
     public static boolean fieldIsEmpty(Field[][] fields) {
         boolean result = true;
@@ -137,11 +178,39 @@ public class Board {
     }
 
     private static boolean isTrue(State state) {
-        if (State.EMPTY.equals(State.EMPTY)) return true; else return false; }
+        if (State.EMPTY.equals(State.EMPTY)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-    public int getShipsCount() { return shipsCount; }
+    public int getShipsCount() {
+        return shipsCount;
+    }
 
 
-    private int getTotalCountOfShips(int decksCount) { return SHIP_TYPES_COUNT - decksCount + 1; }
+    private int getTotalCountOfShips(int decksCount) {
+        return SHIP_TYPES_COUNT - decksCount + 1;
+    }
+
+    public void shoot(int x, int y) throws IllegalMoveException {
+        Field field = getField(x, y);
+        if (field.getState() == State.MISS ||
+                field.getState() == State.HIT ||
+                field.getState() == State.SUNK) {
+            throw new IllegalMoveException("This field was hit!");
+        }
+        if (field.getState() == State.EMPTY) {
+            field.setState(State.MISS);
+        } else if (field.getState() == State.SHIP) {
+            field.setState(State.HIT);
+            field.getShip().hit();
+            if (field.getShip().isSunk()) {
+                shipsCount--;
+            }
+
+        }
+    }
 }
 
