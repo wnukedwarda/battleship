@@ -31,12 +31,21 @@ public class Field {
         char token;
 
         switch (state) {
+            case SHIP:
             case EMPTY:
                 token = ' ';
                 break;
 
             case HIT:
                 token = 'o';
+                break;
+
+            case SUNK:
+                token = 'x';
+                break;
+
+            case MISS:
+                token = '!';
                 break;
 
             default:
