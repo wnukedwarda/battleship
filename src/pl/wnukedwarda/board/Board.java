@@ -37,18 +37,24 @@ public class Board {
     }
 
     public void fillBoard() {
+
         Random random = new Random();
+
         for (int decks = 1; decks <= SHIP_TYPES_COUNT; decks++) {
+
             for (int i = 0; i < getTotalCountOfShips(decks); i++) {
 
                 boolean tryAgain;
+
                 do {
                     int x = random.nextInt(BOARD_SIZE);
                     int y = random.nextInt(BOARD_SIZE);
                     Orientation orientation =
                             random.nextBoolean() ? Orientation.HORIZONTAL
                                     : Orientation.VERTICAL;
+
                     Ship ship = getShip(decks, orientation);
+
                     try {
                         addShip(x, y, ship);
                         tryAgain = false;
@@ -56,6 +62,7 @@ public class Board {
                         tryAgain = true;
                     }
                 } while (tryAgain);
+
             }
         }
     }
@@ -116,23 +123,21 @@ public class Board {
         }
 
         Field[] field = new Field[count];
-        int xToSet = x, ytoSet = y;
+        int xToSet = x, yToSet = y;
 
         for (int i = 0; i < count; i++) {
             if (ship.getOrientation() == Orientation.HORIZONTAL) {
                 xToSet = x + i;
             } else {
-                ytoSet = y + i;
+                yToSet = y + i;
             }
-            if (isOutside(x, y)) {
+            if (isOutside(xToSet, yToSet)) {
                 throw new IllegalMoveException("Ship set outside board!");
             }
 
-            field[i] = fields[xToSet][ytoSet];
+            field[i] = fields[xToSet][yToSet];
 
             if (isFieldOccupied(field[i])) {
-
-
                 throw new IllegalMoveException("Field is occupied!");
             }
         }

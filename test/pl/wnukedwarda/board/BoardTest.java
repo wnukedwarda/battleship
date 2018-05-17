@@ -55,12 +55,12 @@ class BoardTest {
     }
 
     @Test
-    void testShouldNotBeAbleToGetOutside() throws  ArrayIndexOutOfBoundsException{
-       ArrayIndexOutOfBoundsException exception = assertThrows(
-                ArrayIndexOutOfBoundsException.class, ()
+    void testShouldNotBeAbleToGetOutside() throws  IllegalMoveException{
+       IllegalMoveException exception = assertThrows(
+                IllegalMoveException.class, ()
                         -> board.addShip(9,0, new Destroyer(Orientation.HORIZONTAL)));
 
-        assertEquals("10", exception.getMessage());
+        assertEquals("Ship set outside board!", exception.getMessage());
     }
 
     @Test
