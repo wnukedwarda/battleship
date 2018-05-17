@@ -94,7 +94,7 @@ public class Board {
     public void printBoard() {
         printLetters();
         for (int i = 0; i < BOARD_SIZE; i++) {
-            int numberToPrint = i ;
+            int numberToPrint = i;
             if (numberToPrint < BOARD_SIZE) {
                 System.out.print(' ');
             }
@@ -200,7 +200,7 @@ public class Board {
     }
 
     public void shoot(int x, int y) throws IllegalMoveException {
-        if(isOutside(x,y)){
+        if (isOutside(x, y)) {
             throw new IllegalMoveException("Don't shoot outside");
         }
         Field field = getField(x, y);

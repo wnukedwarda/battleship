@@ -1,32 +1,32 @@
 package pl.wnukedwarda;
 
-import pl.wnukedwarda.board.Board;
-
-import java.util.Scanner;
-
 public class Main {
 
     public static void main(String[] args) {
 
-        Board board = new Board();
-        board.fillBoard();
+        Player player1 = new Player();
+        Player player2 = new Player();
+        player1.myBoard.fillBoard();
+        player2.myBoard.fillBoard();
 
-        while (board.getShipsCount()>0){
-
-            Scanner sc = new Scanner(System.in);
-
-            board.printBoard();
-            String move = sc.nextLine();
-            move = move.toUpperCase();
-            int y = move.charAt(0) - 'A';
-            int x = move.charAt(1) - '0';
-
-            try {
-                board.shoot(x, y);
-            }catch (IllegalMoveException e) {
-                System.out.println("Error: " + e.getMessage());
+        do {
+            System.out.println("============ Player 1 move ============");
+            System.out.println();
+            player1.play(player2.myBoard);
+            if (player2.myBoard.getShipsCount() == 0) {
+                System.out.println("Player 1 Win! Congratulations!");
+                break;
             }
-        }
-        System.out.println("Game over!");
+
+            System.out.println("============ Player 2 move ============");
+            player2.play(player1.myBoard);
+            if (player1.myBoard.getShipsCount() == 0) {
+                System.out.println("Player 2 Win! Congratulations");
+                break;
+            }
+        } while (player1.myBoard.getShipsCount() == 0
+                || player2.myBoard.getShipsCount() == 0);
+
+        System.out.println("The End!");
     }
 }

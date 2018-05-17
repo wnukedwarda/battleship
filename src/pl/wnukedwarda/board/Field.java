@@ -9,13 +9,21 @@ public class Field {
     private State state;
     private Ship ship;
 
-    public int getX() { return x; }
+    public int getX() {
+        return x;
+    }
 
-    public int getY() { return y;}
+    public int getY() {
+        return y;
+    }
 
-    public State getState() { return state;}
+    public State getState() {
+        return state;
+    }
 
-    public Ship getShip() { return ship; }
+    public Ship getShip() {
+        return ship;
+    }
 
     public Field(int x, int y, State state) {
         this.x = x;
@@ -23,7 +31,7 @@ public class Field {
         this.state = state;
     }
 
-    public void setShip(Ship ship){
+    public void setShip(Ship ship) {
         this.ship = ship;
     }
 
@@ -54,7 +62,7 @@ public class Field {
         return token;
     }
 
-    public void setState(State state){
+    public void setState(State state) {
         this.state = state;
     }
 }
