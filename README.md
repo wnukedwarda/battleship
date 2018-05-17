@@ -1,3 +1,3 @@
-# battleship
-Batlleship Game.
+# Battleship
+Batlleship Game. <br>
 practice in Java.
